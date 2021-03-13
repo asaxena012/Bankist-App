@@ -197,6 +197,30 @@ btnTransfer.addEventListener('click', function (e) {
   inputTransferAmount.blur();
   inputTransferTo.blur();
 });
+//----------- Close Account Functionality --------------
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  //Get the account index
+  const index = accounts.findIndex(
+    acc => acc.username === inputCloseUser.value
+  );
+
+  if (index && accounts[index].pin === Number(inputClosePin.value)) {
+    //Delete Account
+    accounts.splice(index, 1);
+
+    //Hide UI
+    mainApp.style.opacity = 0;
+  }
+
+  //Clear and Loose focus
+  inputCloseUser.value = inputClosePin.value = '';
+  inputClosePin.blur();
+  inputCloseUser.blur();
+});
+
 // ---------------- Sort functionality ----------------
 
 let sorted = false;
