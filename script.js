@@ -129,3 +129,49 @@ const updateUI = acc => {
   calcDisplayInterest(acc);
 };
 
+
+//--------------- Login Part ---------------------
+
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  //Prevent Submitting and reload
+  e.preventDefault();
+
+  //Check username and retrieve account
+
+  currentAccount = accounts.find(
+    account => account.username === inputUser.value
+  );
+
+  //Check pin
+  if (currentAccount?.pin === Number(inputPin.value)) {
+    //Change welcome message
+    labelWelcome.textContent = `Welcome again, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+
+    //Lose focus from input
+    inputPin.value = inputUser.value = '';
+    inputPin.blur();
+
+    //Display App
+
+    mainApp.style.opacity = 100;
+
+    //Update UI
+    updateUI(currentAccount);
+  }
+});
+
+// ---------------- Sort functionality ----------------
+
+let sorted = false;
+
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+
+  displayMovements(currentAccount.movements, !sorted);
+
+  sorted = !sorted;
+});
