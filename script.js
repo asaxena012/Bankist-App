@@ -164,6 +164,39 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
+// ------------------- Transfer Functionality -------------------
+
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  //Get amount
+  const amount = Number(inputTransferAmount.value);
+
+  //Get transfer account
+  const recieverAcc = accounts.find(function (acc) {
+    return acc.username === inputTransferTo.value;
+  });
+
+  //Check valid transfer
+  if (
+    amount > 0 &&
+    recieverAcc &&
+    recieverAcc.username !== currentAccount.username &&
+    amount <= currentAccount.balance
+  ) {
+    //Transfer
+    currentAccount.movements.push(-amount);
+    recieverAcc.movements.push(amount);
+
+    //Update UI
+    updateUI(currentAccount);
+  }
+
+  //Loose focus from transfer input
+  inputTransferAmount.value = inputTransferTo.value = '';
+  inputTransferAmount.blur();
+  inputTransferTo.blur();
+});
 // ---------------- Sort functionality ----------------
 
 let sorted = false;
