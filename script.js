@@ -221,6 +221,26 @@ btnClose.addEventListener('click', function (e) {
   inputCloseUser.blur();
 });
 
+// ----------- Loan Functionality -------------
+
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
+
+  //Rule - Give loan if user has atleast one deposit of >0.1*amount
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= 0.1 * amount)) {
+    currentAccount.movements.push(amount);
+
+    // loose focus
+    inputLoanAmount.value = '';
+    inputLoanAmount.blur();
+  }
+
+  updateUI(currentAccount);
+});
+
 // ---------------- Sort functionality ----------------
 
 let sorted = false;
