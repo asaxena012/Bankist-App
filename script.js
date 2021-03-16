@@ -6,6 +6,16 @@
 const account1 = {
   owner: 'Aditya Saxena',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
+  movementDates: [
+    '2019-12-23T07:42:02.383Z',
+    '2020-01-28T09:15:04.904Z',
+    '2020-04-01T10:17:24.185Z',
+    '2020-05-08T14:11:59.604Z',
+    '2021-03-10T17:01:17.194Z',
+    '2021-03-10T17:01:17.194Z',
+    '2021-03-15T23:36:17.929Z',
+    '2021-03-16T10:51:36.790Z',
+  ],
   pin: 1234,
   interestRate: 4, //%
 };
@@ -13,6 +23,16 @@ const account1 = {
 const account2 = {
   owner: 'Rashmi Rathore',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
+  movementDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
   pin: 1111,
   interestRate: 1.2, //%
 };
@@ -20,6 +40,16 @@ const account2 = {
 const account3 = {
   owner: 'Akshay Rawat',
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
+  movementDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
   pin: 2222,
   interestRate: 1.5, //%
 };
@@ -27,6 +57,16 @@ const account3 = {
 const account4 = {
   owner: 'Pranav Shukla',
   movements: [430, 1000, 700, 50, 90],
+  movementDates: [
+    '2019-11-01T13:15:33.035Z',
+    '2019-11-30T09:48:16.867Z',
+    '2019-12-25T06:04:23.907Z',
+    '2020-01-25T14:18:46.235Z',
+    '2020-02-05T16:33:06.386Z',
+    '2020-04-10T14:43:26.374Z',
+    '2020-06-25T18:49:59.371Z',
+    '2020-07-26T12:01:20.894Z',
+  ],
   pin: 4444,
   interestRate: 3, //%
 };
@@ -53,6 +93,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 const btnLoan = document.querySelector('.form__btn--loan');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const btnSort = document.querySelector('.btn--sort');
+const labelDate = document.querySelector('.date');
 
 // Calculating usernames
 
@@ -64,14 +105,44 @@ accounts.forEach(account => {
     .join('');
 });
 
+//Format date function
+
+const formatMovementDates = date => {
+  const calcDaysPassed = date => {
+    const daysPassed = Math.round(
+      Math.abs((new Date() - date) / (1000 * 60 * 60 * 24))
+    );
+    return daysPassed;
+  };
+
+  const daysPassed = calcDaysPassed(date);
+
+  if (daysPassed == 0) return 'Today';
+  if (daysPassed == 1) return 'Yesterday';
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+
+  const dateStr = `${date.getDate()}`.padStart(2, 0);
+  const monthStr = `${date.getMonth() + 1}`.padStart(2, 0);
+  const yearStr = `${date.getFullYear()}`.padStart(2, 0);
+
+  return `${dateStr}/${monthStr}/${yearStr}`;
+};
+
 // Displaying Movements
 
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (account, sort = false) {
   movementsContainer.innerHTML = '';
 
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? account.movements.slice().sort((a, b) => a - b)
+    : account.movements;
 
   movs.forEach(function (val, i) {
+    //Get Date
+    const date = new Date(account.movementDates[i]);
+
+    const finalDateStr = formatMovementDates(date);
+
     const type = val >= 0 ? 'deposit' : 'withdrawal';
 
     const html = `
@@ -79,6 +150,7 @@ const displayMovements = function (movements, sort = false) {
         <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
+    <div class="movements__date">${finalDateStr}</div>
         <div class="movements__value">${val.toFixed(2)}Rs</div>
     </div>
         `;
@@ -122,13 +194,21 @@ const calcDisplayInterest = account => {
 
 //Update UI Function
 const updateUI = acc => {
-  displayMovements(acc.movements);
+  displayMovements(acc);
   calcDisplayBalance(acc);
   calcDisplayDeposit(acc.movements);
   calcDisplayWithdrawal(acc.movements);
   calcDisplayInterest(acc);
-};
 
+  //Display Date
+  const currentDate = new Date();
+  const dateStr = `${currentDate.getDate()}`.padStart(2, 0);
+  const monthStr = `${currentDate.getMonth() + 1}`.padStart(2, 0);
+  const yearStr = `${currentDate.getFullYear()}`.padStart(2, 0);
+
+  const finalDateStr = `${dateStr}/${monthStr}/${yearStr}`;
+  labelDate.textContent = finalDateStr;
+};
 
 //--------------- Login Part ---------------------
 
@@ -188,6 +268,10 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount);
     recieverAcc.movements.push(amount);
 
+    //Store dates
+    currentAccount.movementDates.push(new Date().toISOString());
+    recieverAcc.movementDates.push(new Date().toISOString());
+
     //Update UI
     updateUI(currentAccount);
   }
@@ -232,6 +316,8 @@ btnLoan.addEventListener('click', e => {
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= 0.1 * amount)) {
     currentAccount.movements.push(amount);
+
+    currentAccount.movementDates.push(new Date().toISOString());
 
     // loose focus
     inputLoanAmount.value = '';
