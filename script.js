@@ -94,6 +94,7 @@ const btnLoan = document.querySelector('.form__btn--loan');
 const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const btnSort = document.querySelector('.btn--sort');
 const labelDate = document.querySelector('.date');
+const labelTimer = document.querySelector('.timer');
 
 // Calculating usernames
 
@@ -258,6 +259,9 @@ btnLogin.addEventListener('click', function (e) {
 
     //Update UI
     updateUI(currentAccount);
+
+    if (timer) clearInterval(timer);
+    timer = startTimer();
   }
 });
 
@@ -291,6 +295,9 @@ btnTransfer.addEventListener('click', function (e) {
 
     //Update UI
     updateUI(currentAccount);
+
+    if (timer) clearInterval(timer);
+    timer = startTimer();
   }
 
   //Loose focus from transfer input
@@ -339,6 +346,9 @@ btnLoan.addEventListener('click', e => {
     // loose focus
     inputLoanAmount.value = '';
     inputLoanAmount.blur();
+
+    if (timer) clearInterval(timer);
+    timer = startTimer();
   }
 
   updateUI(currentAccount);
@@ -351,7 +361,32 @@ let sorted = false;
 btnSort.addEventListener('click', e => {
   e.preventDefault();
 
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
 
   sorted = !sorted;
 });
+
+// Timer functionality
+let timer;
+function startTimer() {
+  let time = 10 * 60;
+
+  const timerCallback = () => {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+
+    labelTimer.textContent = `${min}:${sec}`;
+
+    //Logout
+    if (time == 0) {
+      clearInterval(timer);
+      //Hide UI
+      mainApp.style.opacity = 0;
+    }
+
+    time--;
+  };
+
+  timerCallback();
+  return setInterval(timerCallback, 1000);
+}
