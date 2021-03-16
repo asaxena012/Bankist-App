@@ -121,11 +121,15 @@ const formatMovementDates = date => {
   if (daysPassed == 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  const dateStr = `${date.getDate()}`.padStart(2, 0);
-  const monthStr = `${date.getMonth() + 1}`.padStart(2, 0);
-  const yearStr = `${date.getFullYear()}`.padStart(2, 0);
+  // const dateStr = `${date.getDate()}`.padStart(2, 0);
+  // const monthStr = `${date.getMonth() + 1}`.padStart(2, 0);
+  // const yearStr = `${date.getFullYear()}`.padStart(2, 0);
 
-  return `${dateStr}/${monthStr}/${yearStr}`;
+  // return `${dateStr}/${monthStr}/${yearStr}`;
+
+  // Internationalising date
+
+  return new Intl.DateTimeFormat(navigator.language).format(date);
 };
 
 // Displaying Movements
@@ -201,13 +205,26 @@ const updateUI = acc => {
   calcDisplayInterest(acc);
 
   //Display Date
-  const currentDate = new Date();
-  const dateStr = `${currentDate.getDate()}`.padStart(2, 0);
-  const monthStr = `${currentDate.getMonth() + 1}`.padStart(2, 0);
-  const yearStr = `${currentDate.getFullYear()}`.padStart(2, 0);
+  // const currentDate = new Date();
+  // const dateStr = `${currentDate.getDate()}`.padStart(2, 0);
+  // const monthStr = `${currentDate.getMonth() + 1}`.padStart(2, 0);
+  // const yearStr = `${currentDate.getFullYear()}`.padStart(2, 0);
 
-  const finalDateStr = `${dateStr}/${monthStr}/${yearStr}`;
-  labelDate.textContent = finalDateStr;
+  // const finalDateStr = `${dateStr}/${monthStr}/${yearStr}`;
+  // labelDate.textContent = finalDateStr;
+
+  //Internationalising dates
+  const options = {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  };
+  labelDate.textContent = new Intl.DateTimeFormat(
+    navigator.language,
+    options
+  ).format(new Date());
 };
 
 //--------------- Login Part ---------------------
